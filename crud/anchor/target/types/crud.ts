@@ -1,166 +1,42 @@
 /**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/counter.json`.
+ * Program IDL in camelCase format for use in JavaScript/TypeScript.
+ * 
+ * This type definition corresponds to the journal CRUD program implemented in Rust.
  */
-export type Counter = {
-  "address": "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ",
-  "metadata": {
-    "name": "counter",
-    "version": "0.1.0",
-    "spec": "0.1.0",
-    "description": "Created with Anchor"
-  },
-  "instructions": [
-    {
-      "name": "close",
-      "discriminator": [
-        98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "counter",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "systemProgram",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "set",
-      "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": [
-        {
-          "name": "value",
-          "type": "u8"
-        }
-      ]
-    }
-  ],
-  "accounts": [
-    {
-      "name": "counter",
-      "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
-      ]
-    }
-  ],
-  "types": [
-    {
-      "name": "counter",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "count",
-            "type": "u8"
-          }
-        ]
-      }
-    }
-  ]
+export type JournalCrud = {
+  address: "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ";
+  metadata: {
+    name: "crud";
+    version: "0.1.0";
+    spec: "0.1.0";
+    description: "Created with Anchor";
+  };
+  instructions: Array<{
+    name: string; // Name of the instruction (e.g., "create_journal_entry").
+    discriminator: number[]; // Discriminator is used to uniquely identify the instruction.
+    accounts: Array<{
+      name: string; // Account name (e.g., "journal_entry", "owner").
+      writable?: boolean; // If the account is writable (can be modified).
+      signer?: boolean; // If the account is a signer (i.e., must approve the transaction).
+      address?: string; // Fixed address (e.g., "system_program").
+    }>;
+    args: Array<{
+      name: string; // Name of the argument (e.g., "title", "message").
+      type: string; // Type of the argument (e.g., "string", "u8").
+    }>;
+  }>;
+  accounts: Array<{
+    name: string; // Account name (e.g., "journal_entry").
+    discriminator: number[]; // Account discriminator used to identify the account type.
+  }>;
+  types: Array<{
+    name: string; // Type name (e.g., "journal_entry").
+    type: {
+      kind: string; // "struct" to define a custom data structure.
+      fields: Array<{
+        name: string; // Field name (e.g., "owner", "title", "message").
+        type: string; // Field type (e.g., "string", "Pubkey").
+      }>;
+    };
+  }>;
 };

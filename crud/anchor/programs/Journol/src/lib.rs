@@ -9,7 +9,7 @@ pub mod crud {
     use super::*;
 
     pub fn create_journal_entry(
-        ctx: Context<CreateEntry>,
+        ctx: Context<CreateEntry>, // context refers to the environment in which your program operates. When you write programs (smart contracts) in Rust for Solana, the context encapsulates the accounts, data, and other parameters required for executing the program’s logic.
         title: String,
         message: String,
     ) -> Result<()> {
@@ -19,6 +19,7 @@ pub mod crud {
 
         let journal_entry = &mut ctx.accounts.journal_entry;
         journal_entry.owner = ctx.accounts.owner.key();
+        /// ctx.  ...provides direct access to the accounts passed to the function.
         journal_entry.title = title;
         journal_entry.message = message;
         Ok(())
@@ -45,6 +46,8 @@ pub mod crud {
     }
 }
 
+//the above state is program
+
 #[account]
 pub struct JournalEntryState {
     pub owner: Pubkey,
@@ -63,7 +66,7 @@ pub struct CreateEntry<'info> {
         space = 8 + 32 + 4 + title.len() + 4 + message.len()
     )]
     pub journal_entry: Account<'info, JournalEntryState>,
-    #[account(mut)]
+    #[account(mut)] //it means our account can bee modified
     pub owner: Signer<'info>,
     pub system_program: Program<'info, System>,
 }
@@ -82,7 +85,7 @@ pub struct UpdateEntry<'info> {
     pub journal_entry: Account<'info, JournalEntryState>,
     #[account(mut)]
     pub owner: Signer<'info>,
-    pub system_program: Program<'info, System>,
+    pub system_program: Program<'info, System>, // Every transaction involving basic account operations interacts with the System Program.
 }
 
 #[derive(Accounts)]

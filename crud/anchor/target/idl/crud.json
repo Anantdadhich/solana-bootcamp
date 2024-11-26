@@ -1,157 +1,105 @@
 {
-  "address": "AsjZ3kWAUSQRNt2pZVeJkywhZ6gpLpHZmJjduPmKZDZZ",
+  "address": "your_program_id",
   "metadata": {
-    "name": "counter",
+    "name": "crud",
     "version": "0.1.0",
     "spec": "0.1.0",
-    "description": "Created with Anchor"
+    "description": "CRUD program for journal entries"
   },
   "instructions": [
     {
-      "name": "close",
-      "discriminator": [
-        98,
-        165,
-        201,
-        177,
-        108,
-        65,
-        206,
-        96
-      ],
+      "name": "createJournalEntry",
+      "discriminator": [0, 1, 2, 3, 4, 5, 6, 7],
       "accounts": [
         {
-          "name": "payer",
+          "name": "journalEntry",
           "writable": true,
+          "signer": false
+        },
+        {
+          "name": "owner",
+          "writable": false,
           "signer": true
         },
         {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "decrement",
-      "discriminator": [
-        106,
-        227,
-        168,
-        59,
-        248,
-        27,
-        150,
-        101
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "increment",
-      "discriminator": [
-        11,
-        18,
-        104,
-        9,
-        104,
-        174,
-        59,
-        33
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "initialize",
-      "discriminator": [
-        175,
-        175,
-        109,
-        31,
-        13,
-        152,
-        155,
-        237
-      ],
-      "accounts": [
-        {
-          "name": "payer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "counter",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "system_program",
+          "name": "systemProgram",
           "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "set",
-      "discriminator": [
-        198,
-        51,
-        53,
-        241,
-        116,
-        29,
-        126,
-        194
-      ],
-      "accounts": [
-        {
-          "name": "counter",
-          "writable": true
         }
       ],
       "args": [
         {
-          "name": "value",
-          "type": "u8"
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "message",
+          "type": "string"
         }
       ]
+    },
+    {
+      "name": "updateJournalEntry",
+      "discriminator": [8, 9, 10, 11, 12, 13, 14, 15],
+      "accounts": [
+        {
+          "name": "journalEntry",
+          "writable": true,
+          "signer": false
+        },
+        {
+          "name": "owner",
+          "writable": false,
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "message",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "deleteJournalEntry",
+      "discriminator": [16, 17, 18, 19, 20, 21, 22, 23],
+      "accounts": [
+        {
+          "name": "journalEntry",
+          "writable": true,
+          "signer": false
+        },
+        {
+          "name": "owner",
+          "writable": false,
+          "signer": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
     {
-      "name": "Counter",
-      "discriminator": [
-        255,
-        176,
-        4,
-        245,
-        188,
-        253,
-        124,
-        25
-      ]
+      "name": "journalEntry",
+      "discriminator": [24, 25, 26, 27, 28, 29, 30, 31]
     }
   ],
   "types": [
     {
-      "name": "Counter",
+      "name": "JournalEntry",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "count",
-            "type": "u8"
+            "name": "owner",
+            "type": "publicKey"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "message",
+            "type": "string"
           }
         ]
       }

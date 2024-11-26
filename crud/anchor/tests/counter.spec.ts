@@ -1,76 +1,39 @@
-import * as anchor from '@coral-xyz/anchor'
-import {Program} from '@coral-xyz/anchor'
-import {Keypair} from '@solana/web3.js'
-import {Crud} from '../target/types/crud'
+import * as anchor from '@coral-xyz/anchor';
+import { Program } from '@coral-xyz/anchor';
+import { Keypair } from '@solana/web3.js';
+import CrudIDL from '../target/idl/crud.json'; // Path to your generated IDL file
+import type { JournalCrud } from '../target/types/crud'; // Adjust path to generated types
 
-describe('counter', () => {
-  // Configure the client to use the local cluster.
-  const provider = anchor.AnchorProvider.env()
-  anchor.setProvider(provider)
-  const payer = provider.wallet as anchor.Wallet
+// Ensure this is properly defined according to your project structure
+export { JournalCrud, CrudIDL };
 
-  const program = anchor.workspace.Counter as Program<Counter>
+// Define the Program with the correct IDL type
+const program = anchor.workspace.Crud as Program<JournalCrud>;
 
-  const counterKeypair = Keypair.generate()
+// Then use it in your tests as usual
+describe('crud', () => {
+  const provider = anchor.AnchorProvider.env();
+  anchor.setProvider(provider);
+  const payer = provider.wallet as anchor.Wallet;
 
-  it('Initialize Counter', async () => {
+  const journalKeypair = Keypair.generate();
+
+  it('Initialize Journal Entry', async () => {
     await program.methods
-      .initialize()
+      .createJournalEntry('My First Entry', 'This is a test entry')
       .accounts({
-        counter: counterKeypair.publicKey,
-        payer: payer.publicKey,
+        journalEntry: journalKeypair.publicKey,
+        owner: payer.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
       })
-      .signers([counterKeypair])
-      .rpc()
+      .signers([journalKeypair])
+      .rpc();
 
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
+    const currentEntry = await program.account.journalEntry.fetch(journalKeypair.publicKey);
 
-    expect(currentCount.count).toEqual(0)
-  })
+    expect(currentEntry.title).toEqual('My First Entry');
+    expect(currentEntry.message).toEqual('This is a test entry');
+  });
 
-  it('Increment Counter', async () => {
-    await program.methods.increment().accounts({ counter: counterKeypair.publicKey }).rpc()
-
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(1)
-  })
-
-  it('Increment Counter Again', async () => {
-    await program.methods.increment().accounts({ counter: counterKeypair.publicKey }).rpc()
-
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(2)
-  })
-
-  it('Decrement Counter', async () => {
-    await program.methods.decrement().accounts({ counter: counterKeypair.publicKey }).rpc()
-
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(1)
-  })
-
-  it('Set counter value', async () => {
-    await program.methods.set(42).accounts({ counter: counterKeypair.publicKey }).rpc()
-
-    const currentCount = await program.account.counter.fetch(counterKeypair.publicKey)
-
-    expect(currentCount.count).toEqual(42)
-  })
-
-  it('Set close the counter account', async () => {
-    await program.methods
-      .close()
-      .accounts({
-        payer: payer.publicKey,
-        counter: counterKeypair.publicKey,
-      })
-      .rpc()
-
-    // The account should no longer exist, returning null.
-    const userAccount = await program.account.counter.fetchNullable(counterKeypair.publicKey)
-    expect(userAccount).toBeNull()
-  })
-})
+  // Add more tests for other methods...
+});
