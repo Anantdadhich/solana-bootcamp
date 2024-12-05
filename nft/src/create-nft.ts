@@ -24,14 +24,14 @@ const umiuser=umi.eddsa.createKeypairFromSecretKey(user.secretKey)
 umi.use(keypairIdentity(umiuser))
 
 
-const mint=generateSigner(umi)
+const mint=generateSigner(umi)  
 
 const collectionaddres=publicKey("")
 
 const createnft=await createNft(umi,{
     mint,
     name:"adtech",
-    uri:"",
+    uri:"https://raw.githubusercontent.com/solana-developers/professional-education/main/labs/sample-nft-collection-offchain-data.json",
     sellerFeeBasisPoints:percentAmount(0),
     collection:{
         key:collectionaddres,
