@@ -4,7 +4,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { useMemo } from 'react'
 import { ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useCounterProgram, useCounterProgramAccount } from './counter-data-access'
+import { useCounterProgram, useCounterProgramAccount } from './vesting-data-acces'
 
 export function CounterCreate() {
   const { initialize } = useCounterProgram()

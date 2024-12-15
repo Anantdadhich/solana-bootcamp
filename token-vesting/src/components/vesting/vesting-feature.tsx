@@ -4,9 +4,9 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { AppHero, ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useCounterProgram } from './counter-data-access'
-import { CounterCreate, CounterList } from './counter-ui'
-
+import { useCounterProgram } from './vesting-data-acces'
+import { CounterCreate, CounterList } from './vesting-ui'
+ 
 export default function CounterFeature() {
   const { publicKey } = useWallet()
   const { programId } = useCounterProgram()
