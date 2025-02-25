@@ -4,12 +4,12 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import { WalletButton } from '../solana/solana-provider'
 import { AppHero, ellipsify } from '../ui/ui-layout'
 import { ExplorerLink } from '../cluster/cluster-ui'
-import { useCounterProgram } from './vesting-data-acces'
-import { CounterCreate, CounterList } from './vesting-ui'
+import { useVestingProgram} from './vesting-data-acces'
+import {  VestingCreate,VestingList } from './vesting-ui'
  
-export default function CounterFeature() {
+export default function VestingFeature() {
   const { publicKey } = useWallet()
-  const { programId } = useCounterProgram()
+  const { progrqamId } = useVestingProgram()
 
   return publicKey ? (
     <div>
@@ -20,11 +20,11 @@ export default function CounterFeature() {
         }
       >
         <p className="mb-6">
-          <ExplorerLink path={`account/${programId}`} label={ellipsify(programId.toString())} />
+          <ExplorerLink path={`account/${progrqamId}`} label={ellipsify(progrqamId.toString())} />
         </p>
-        <CounterCreate />
+        <VestingCreate />
       </AppHero>
-      <CounterList />
+      <VestingList />
     </div>
   ) : (
     <div className="max-w-4xl mx-auto">

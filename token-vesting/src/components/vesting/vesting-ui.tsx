@@ -1,27 +1,54 @@
 'use client'
 
 import { Keypair, PublicKey } from '@solana/web3.js'
-import { useMemo } from 'react'
-import { ellipsify } from '../ui/ui-layout'
-import { ExplorerLink } from '../cluster/cluster-ui'
-import { useCounterProgram, useCounterProgramAccount } from './vesting-data-acces'
+import { useMemo, useState } from 'react'
+import { useVestingProgram,useVestingProgramAccount } from './vesting-data-acces'
+import { useWallet } from '@solana/wallet-adapter-react'
 
-export function CounterCreate() {
-  const { initialize } = useCounterProgram()
+export function VestingCreate() {
+  const { createVestingAccount } = useVestingProgram()
+   const {publicKey}=useWallet() ;
+   const [company,setCompany]=useState("");
+   const [mint,setmint]=useState("") ;
+
+   const isFormValid=company.length > 0
+   const handleSumbit=()=>{
+      if (publicKey && isFormValid) {
+        createVestingAccount.mutateAsync({companyName:company,mint:mint})
+      }
+   }   
+
+
+   if (!publicKey) {
+    return <p>Connect wallet </p>
+   }
 
   return (
-    <button
-      className="btn btn-xs lg:btn-md btn-primary"
-      onClick={() => initialize.mutateAsync(Keypair.generate())}
-      disabled={initialize.isPending}
-    >
-      Create {initialize.isPending && '...'}
+ <div>
+    <input type="text" placeholder='company Name'   
+    value={company} 
+   className='input input-bordered'
+    onChange={(e)=> setCompany(e.target.value)}
+    />
+
+    <input type="text" placeholder='tokem mint add' 
+     value={mint} 
+     onChange={(e)=>setmint(e.target.value)}
+    /> 
+
+
+    <button 
+      onClick={handleSumbit} 
+      disabled={createVestingAccount.isPending  || ! isFormValid}
+    > 
+      Create new Vesting Account {createVestingAccount.isPending && "..."}
     </button>
+ </div>
   )
 }
 
-export function CounterList() {
-  const { accounts, getProgramAccount } = useCounterProgram()
+export function VestingList() {
+  const { accounts, getProgramAccount } = useVestingProgram()
 
   if (getProgramAccount.isLoading) {
     return <span className="loading loading-spinner loading-lg"></span>
@@ -40,7 +67,7 @@ export function CounterList() {
       ) : accounts.data?.length ? (
         <div className="grid md:grid-cols-2 gap-4">
           {accounts.data?.map((account) => (
-            <CounterCard key={account.publicKey.toString()} account={account.publicKey} />
+            <VestingCard key={account.publicKey.toString()} account={account.publicKey} />
           ))}
         </div>
       ) : (
@@ -53,68 +80,70 @@ export function CounterList() {
   )
 }
 
-function CounterCard({ account }: { account: PublicKey }) {
-  const { accountQuery, incrementMutation, setMutation, decrementMutation, closeMutation } = useCounterProgramAccount({
+function VestingCard({ account }: { account: PublicKey }) {
+  const { accountquery,createEmpoplyeVesting } = useVestingProgramAccount({
     account,
   })
 
-  const count = useMemo(() => accountQuery.data?.count ?? 0, [accountQuery.data?.count])
 
-  return accountQuery.isLoading ? (
+  const [starttime,setstarttime]=useState(0)  
+    const [endTime,setendtime]=useState(0)  
+      const [ totalamount,settotaltime]=useState(0)  
+        const [cliffTime,setclifftime]=useState(0)  
+        
+        
+   const companyName=useMemo(
+    ()=> accountquery.data?.companyName ?? 0 ,
+    [ accountquery.data?.companyName]
+   )
+
+
+
+ 
+
+  return accountquery.isLoading ? (
     <span className="loading loading-spinner loading-lg"></span>
   ) : (
     <div className="card card-bordered border-base-300 border-4 text-neutral-content">
       <div className="card-body items-center text-center">
         <div className="space-y-6">
-          <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountQuery.refetch()}>
-            {count}
+          <h2 className="card-title justify-center text-3xl cursor-pointer" onClick={() => accountquery.refetch()}>
+            {companyName}
           </h2>
           <div className="card-actions justify-around">
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => incrementMutation.mutateAsync()}
-              disabled={incrementMutation.isPending}
-            >
-              Increment
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => {
-                const value = window.prompt('Set value to:', count.toString() ?? '0')
-                if (!value || parseInt(value) === count || isNaN(parseInt(value))) {
-                  return
-                }
-                return setMutation.mutateAsync(parseInt(value))
-              }}
-              disabled={setMutation.isPending}
-            >
-              Set
-            </button>
-            <button
-              className="btn btn-xs lg:btn-md btn-outline"
-              onClick={() => decrementMutation.mutateAsync()}
-              disabled={decrementMutation.isPending}
-            >
-              Decrement
-            </button>
+              
+            <input type="text" placeholder='start'  
+            value={starttime || " "}
+                onChange={(e)=> setstarttime(parseInt(e.target.value))}
+              />
+               <input type="text" placeholder='end'  
+            value={endTime || " "}
+                onChange={(e)=> setendtime(parseInt(e.target.value))}
+              />
+
+               <input type="text" placeholder='total amount '  
+            value={ totalamount || " "}
+                onChange={(e)=> settotaltime(parseInt(e.target.value))}
+              />
+               <input type="text" placeholder='cliff time '  
+            value={cliffTime || " "}
+                onChange={(e)=> setclifftime(parseInt(e.target.value))}
+              />
+
+              <button   
+               onClick={()=> 
+                   createEmpoplyeVesting.mutateAsync ({
+                      starttime,
+                      endTime,
+                      cliffTime,
+                      totalamount
+                   })
+               }
+              >  
+
+              </button>
           </div>
-          <div className="text-center space-y-4">
-            <p>
-              <ExplorerLink path={`account/${account}`} label={ellipsify(account.toString())} />
-            </p>
-            <button
-              className="btn btn-xs btn-secondary btn-outline"
-              onClick={() => {
-                if (!window.confirm('Are you sure you want to close this account?')) {
-                  return
-                }
-                return closeMutation.mutateAsync()
-              }}
-              disabled={closeMutation.isPending}
-            >
-              Close
-            </button>
-          </div>
+             
         </div>
       </div>
     </div>
